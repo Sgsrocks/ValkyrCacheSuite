@@ -26,18 +26,12 @@ import java.util.Map;
 public class KronosDataPacker extends Plugin {
 
     private static final int[] BLACKLIST_ITEMS = {
-            22610, 22613, 22616, 22619, 23615, //Vesta's
-            22638, 22641, 22644, //Morrigan's
-            22647, 22650, 22653, 22656, 23617, // Zuriel's
-            22622, 22625, 22628, 22631, 23620, //Statius's
-            6758, //Bonus exp scroll
-            4067, //Vote ticket
     };
     private static final int[] BLACKLIST_NPCS = {
-            2153, 5051, 5081
+
     };
     private static final int[] BLACKLIST_OBJECTS = {
-            23311, 7389, 34752
+
     };
     private static final int[] BLACKLIST_SPOTS = {
 
@@ -46,7 +40,7 @@ public class KronosDataPacker extends Plugin {
 
     };
     private static final int[] BLACKLIST_REGIONS = {
-            5535, 7991, 7992, 8248, 8247, 9046, 12342,
+
     };
 
     private static final boolean skeletons = true;
@@ -60,10 +54,20 @@ public class KronosDataPacker extends Plugin {
     private static final boolean varbit = true;
     private static final boolean idk = true;
     private static final boolean maps = true;
-    private static boolean cs2; //maybe
+    private static boolean music2 = true;
+    private static boolean music1 = true;
+    private static boolean sound1 = true;
+    private static boolean sound2 = true;
+    private static boolean sound3 = true;
+    private static boolean area = false;
+    private static boolean worldmap = false;
+    private static boolean cs2 = false; //maybe
     private static boolean enums; //maybe
-    private static boolean sprites; //
-    private static boolean interfaces; //maybe
+    private static boolean sprites = false; //
+    private static boolean interfaces = false; //maybe
+    private static boolean underlay = false;
+    private static boolean overlay = false;
+    private static boolean textures = true;
     
     private static final ProgressListener progressListener = new AbstractProgressListener() {
         
@@ -82,9 +86,9 @@ public class KronosDataPacker extends Plugin {
     public static void main(String[] args) {
 
         progressListener.notify(0, "Initializing Kronos cache");
-        CacheLibrary kronos_cache = CacheLibrary.createUncached("H:\\Github\\ZarosOSRS\\cache\\");
+        CacheLibrary kronos_cache = CacheLibrary.createUncached("C:\\Users\\sgsrocks\\Downloads\\shane-cache\\cache\\");
         progressListener.notify(0, "Initializing RuneScape cache");
-        CacheLibrary runescape_cache = CacheLibrary.createUncached("C:\\Users\\Andrew\\Desktop\\rev190\\cache\\");
+        CacheLibrary runescape_cache = CacheLibrary.createUncached("C:\\Users\\sgsrocks\\Downloads\\2022-03-02-rev203\\cache\\");
         progressListener.notify(0, "Initializing XTEA manager");
         XTEASManager.get().init();
 
@@ -252,7 +256,255 @@ public class KronosDataPacker extends Plugin {
             kronos_models.update(progressListener);
 
         }
+        if (textures) {
 
+            Index kronos_models = kronos_cache.getIndex(OSRSIndices.TEXTURES);
+            Index runescape_models = runescape_cache.getIndex(OSRSIndices.TEXTURES);
+
+            int model_count = runescape_models.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_models.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_models.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating textures {" + i + "/" + model_count + "}");
+            }
+            kronos_models.update(progressListener);
+
+        }
+        if (music1) {
+
+            Index kronos_music1 = kronos_cache.getIndex(OSRSIndices.MUSIC_1);
+            Index runescape_music1 = runescape_cache.getIndex(OSRSIndices.MUSIC_1);
+
+            int model_count = runescape_music1.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music1.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music1.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating music 1 {" + i + "/" + model_count + "}");
+            }
+            kronos_music1.update(progressListener);
+
+        }
+        if (music2) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.MUSIC_2);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.MUSIC_2);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating music 2 {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (sprites) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.SPRITES);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.SPRITES);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating Sprites {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (interfaces) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.INTERFACE);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.INTERFACE);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating Sprites {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (cs2) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.CLIENT_SCRIPT);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.CLIENT_SCRIPT);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating Sprites {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (worldmap) {
+
+            Index kronos_music2 = kronos_cache.getIndex(16);
+            Index runescape_music2 = runescape_cache.getIndex(16);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating worldmap {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (area) {
+
+            Archive kronos_seqs = kronos_config.getArchive(35);
+            Archive runescape_seqs = runescape_config.getArchive(35);
+
+            int sequence_count = runescape_config.getArchive(35).getLastFile().getId();
+
+            for (int i = 0; i < sequence_count; i++) {
+                File rs_file = runescape_seqs.getFile(i);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_seqs.addFile(i, rs_data);
+                progressListener.notify(i / (double) sequence_count, "Updating area {" + i + "/" + sequence_count + "}");
+            }
+
+        }
+        if (sound1) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.SOUND_EFFECTS_1);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.SOUND_EFFECTS_1);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating sound 1 {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (sound2) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.SOUND_EFFECTS_2);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.SOUND_EFFECTS_2);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating sound 2 {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
+        if (sound3) {
+
+            Index kronos_music2 = kronos_cache.getIndex(OSRSIndices.SOUND_EFFECTS_3);
+            Index runescape_music2 = runescape_cache.getIndex(OSRSIndices.SOUND_EFFECTS_3);
+
+            int model_count = runescape_music2.getLastArchive().getId();
+
+            for (int i = 0; i < model_count; i++) {
+                Archive model = runescape_music2.getArchive(i);
+                if (model == null)
+                    continue;
+                File rs_file = model.getFile(0);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_music2.addArchive(i).addFile(0, model.getData());
+                progressListener.notify(i / (double) model_count, "Updating sound 3 {" + i + "/" + model_count + "}");
+            }
+            kronos_music2.update(progressListener);
+
+        }
         if (varbit) {
 
             Archive kronos_varbit = kronos_config.getArchive(14);
@@ -272,7 +524,44 @@ public class KronosDataPacker extends Plugin {
             }
 
         }
+        if (underlay) {
 
+            Archive kronos_varbit = kronos_config.getArchive(1);
+            Archive runescape_varbit = runescape_config.getArchive(1);
+
+            int varbit_count = runescape_varbit.getLastFile().getId();
+
+            for (int i = 0; i < varbit_count; i++) {
+                File rs_file = runescape_varbit.getFile(i);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_varbit.addFile(i, rs_data);
+                progressListener.notify(i / (double) varbit_count, "Updating underlay {" + i + "/" + varbit_count + "}");
+            }
+
+        }
+        if (overlay) {
+
+            Archive kronos_varbit = kronos_config.getArchive(4);
+            Archive runescape_varbit = runescape_config.getArchive(4);
+
+            int varbit_count = runescape_varbit.getLastFile().getId();
+
+            for (int i = 0; i < varbit_count; i++) {
+                File rs_file = runescape_varbit.getFile(i);
+                if (rs_file == null)
+                    continue;
+                byte[] rs_data = rs_file.getData();
+                if (rs_data == null)
+                    continue;
+                kronos_varbit.addFile(i, rs_data);
+                progressListener.notify(i / (double) varbit_count, "Updating overlay {" + i + "/" + varbit_count + "}");
+            }
+
+        }
         if (idk) {
 
             Archive kronos_idk = kronos_config.getArchive(3);

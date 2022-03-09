@@ -17,6 +17,8 @@ import store.utilities.ReflectionUtils;
  */
 public class NPCConfig extends ConfigExtensionBase {
 
+	private int category;
+
 	@Override
 	public void decode(int opcode, InputStream buffer) {
 		int length;
@@ -44,6 +46,8 @@ public class NPCConfig extends ConfigExtensionBase {
 			rotate180Animation = buffer.readUnsignedShort();
 			rotate90RightAnimation = buffer.readUnsignedShort();
 			rotate90LeftAnimation = buffer.readUnsignedShort();
+		} else if (opcode == 18) { // L: 101
+			category = buffer.readUnsignedShort(); // L: 102
 		} else if (opcode >= 30 && opcode < 35) {
 			options[opcode - 30] = buffer.readString();
 			if (options[opcode - 30].equalsIgnoreCase("Hidden")) {
@@ -201,7 +205,10 @@ public class NPCConfig extends ConfigExtensionBase {
 			buffer.writeShort(rotate90RightAnimation);
 			buffer.writeShort(rotate90LeftAnimation);
 		}
-		
+		if (category > -1) {
+			buffer.writeByte(18);
+			buffer.writeShort(category);
+		}
 		if (options != null) {
 			for (int index = 0; index < options.length; index++) {
 				if(options[index] == null || options[index].isEmpty())

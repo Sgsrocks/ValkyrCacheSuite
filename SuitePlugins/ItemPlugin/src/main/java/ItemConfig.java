@@ -7,127 +7,130 @@ import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
 import store.io.impl.InputStream;
 import store.io.impl.OutputStream;
-import suite.annotation.ColorIdentifier;
 import suite.annotation.MeshIdentifier;
 import suite.annotation.OrderType;
 import store.plugin.extension.ConfigExtensionBase;
 import store.utilities.ReflectionUtils;
-import suite.annotation.type.RecolorType;
-import suite.annotation.type.RetextureType;
-import suite.annotation.type.TextureIdentifier;
 
 /**
  * @author ReverendDread Sep 17, 2019
  */
 public class ItemConfig extends ConfigExtensionBase {
 
+	private String opcode9 = "null";
+	private int category = -1;
+
 	@Override
 	public void decode(int opcode, InputStream buffer) {
 		if (opcode == 1) {
-			inventoryModel = buffer.readUnsignedShort();
+			modelId = buffer.readUnsignedShort();
 		} else if (opcode == 2) {
 			name = buffer.readString();
 		} else if (opcode == 4) {
-			zoom2d = buffer.readUnsignedShort();
+			spriteScale = buffer.readUnsignedShort();
 		} else if (opcode == 5) {
-			xan2d = buffer.readUnsignedShort();
+			spritePitch = buffer.readUnsignedShort();
 		} else if (opcode == 6) {
-			yan2d = buffer.readUnsignedShort();
+			spriteCameraRoll = buffer.readUnsignedShort();
 		} else if (opcode == 7) {
-			xOffset2d = buffer.readUnsignedShort();
-			if (xOffset2d > 32767) {
-				xOffset2d -= 65536;
+			spriteTranslateX = buffer.readUnsignedShort();
+			if (spriteTranslateX > 32767) {
+				spriteTranslateX -= 65536;
 			}
 		} else if (opcode == 8) {
-			yOffset2d = buffer.readUnsignedShort();
-			if (yOffset2d > 32767) {
-				yOffset2d -= 65536;
+			spriteTranslateY = buffer.readUnsignedShort();
+			if (spriteTranslateY > 32767) {
+				spriteTranslateY -= 65536;
 			}
+		} else if(opcode == 9) {
+			opcode9 = buffer.readString();
 		} else if (opcode == 11) {
 			stackable = 1;
 		} else if (opcode == 12) {
-			cost = buffer.readInt();
+			value = buffer.readInt();
 		} else if (opcode == 16) {
-			members = true;
+			membersObject = true;
 		} else if (opcode == 23) {
-			maleModel0 = buffer.readUnsignedShort();
-			maleOffset = buffer.readUnsignedByte();
+			primaryMaleModel = buffer.readUnsignedShort();
+			maleTranslation = buffer.readUnsignedByte();
 		} else if (opcode == 24) {
-			maleModel1 = buffer.readUnsignedShort();
+			secondaryMaleModel = buffer.readUnsignedShort();
 		} else if (opcode == 25) {
-			femaleModel0 = buffer.readUnsignedShort();
-			femaleOffset = buffer.readUnsignedByte();
+			primaryFemaleModel = buffer.readUnsignedShort();
+			femaleTranslation = buffer.readUnsignedByte();
 		} else if (opcode == 26) {
-			femaleModel1 = buffer.readUnsignedShort();
+			secondaryFemaleModel = buffer.readUnsignedShort();
 		} else if (opcode >= 30 && opcode < 35) {
-			options[opcode - 30] = buffer.readString();
-			if (options[opcode - 30].equalsIgnoreCase("Hidden")) {
-				options[opcode - 30] = null;
+			groundActions[opcode - 30] = buffer.readString();
+			if (groundActions[opcode - 30].equalsIgnoreCase("Hidden")) {
+				groundActions[opcode - 30] = null;
 			}
 		} else if (opcode >= 35 && opcode < 40) {
-			interfaceOptions[opcode - 35] = buffer.readString();
+			itemActions[opcode - 35] = buffer.readString();
 		} else if (opcode == 40) {
 			int var5 = buffer.readUnsignedByte();
-			colorFind = new int[var5];
-			colorReplace = new int[var5];
+			originalModelColors = new int[var5];
+			modifiedModelColors = new int[var5];
 			for (int var4 = 0; var4 < var5; ++var4) {
-				colorFind[var4] = buffer.readUnsignedShort();
-				colorReplace[var4] = buffer.readUnsignedShort();
+				originalModelColors[var4] = buffer.readUnsignedShort();
+				modifiedModelColors[var4] = buffer.readUnsignedShort();
 			}
 		} else if (opcode == 41) {
 			int var5 = buffer.readUnsignedByte();
-			textureFind = new int[var5];
-			textureReplace = new int[var5];
+			originalTextureColors = new int[var5];
+			modifiedTextureColors = new int[var5];
 			for (int var4 = 0; var4 < var5; ++var4) {
-				textureFind[var4] = buffer.readUnsignedShort();
-				textureReplace[var4] = buffer.readUnsignedShort();
+				originalTextureColors[var4] = buffer.readUnsignedShort();
+				modifiedTextureColors[var4] = buffer.readUnsignedShort();
 			}
 		} else if (opcode == 42) {
-			shiftClickDropIndex = buffer.readByte();
+			shiftClickIndex = buffer.readByte();
 		} else if (opcode == 65) {
-			isTradeable = true;
+			searchable = true;
 		} else if (opcode == 78) {
-			maleModel2 = buffer.readUnsignedShort();
+			tertiaryMaleEquipmentModel = buffer.readUnsignedShort();
 		} else if (opcode == 79) {
-			femaleModel2 = buffer.readUnsignedShort();
+			tertiaryFemaleEquipmentModel = buffer.readUnsignedShort();
 		} else if (opcode == 90) {
-			maleHeadModel = buffer.readUnsignedShort();
+			primaryMaleHeadPiece = buffer.readUnsignedShort();
 		} else if (opcode == 91) {
-			femaleHeadModel = buffer.readUnsignedShort();
+			primaryFemaleHeadPiece = buffer.readUnsignedShort();
 		} else if (opcode == 92) {
-			maleHeadModel2 = buffer.readUnsignedShort();
+			secondaryMaleHeadPiece = buffer.readUnsignedShort();
 		} else if (opcode == 93) {
-			femaleHeadModel2 = buffer.readUnsignedShort();
+			secondaryFemaleHeadPiece = buffer.readUnsignedShort();
+		} else if(opcode == 94) {
+			category = buffer.readUnsignedShort();
 		} else if (opcode == 95) {
-			zan2d = buffer.readUnsignedShort();
+			spriteCameraYaw = buffer.readUnsignedShort();
 		} else if (opcode == 97) {
-			notedID = buffer.readUnsignedShort();
+			certID = buffer.readUnsignedShort();
 		} else if (opcode == 98) {
-			notedTemplate = buffer.readUnsignedShort();
+			certTemplateID = buffer.readUnsignedShort();
 		} else if (opcode >= 100 && opcode < 110) {
-			if (countObj == null) {
-				countObj = new int[10];
-				countCo = new int[10];
+			if (stackIDs == null) {
+				stackIDs = new int[10];
+				stackAmounts = new int[10];
 			}
 
-			countObj[opcode - 100] = buffer.readUnsignedShort();
-			countCo[opcode - 100] = buffer.readUnsignedShort();
+			stackIDs[opcode - 100] = buffer.readUnsignedShort();
+			stackAmounts[opcode - 100] = buffer.readUnsignedShort();
 		} else if (opcode == 110) {
-			resizeX = buffer.readUnsignedShort();
+			groundScaleX = buffer.readUnsignedShort();
 		} else if (opcode == 111) {
-			resizeY = buffer.readUnsignedShort();
+			groundScaleY = buffer.readUnsignedShort();
 		} else if (opcode == 112) {
-			resizeZ = buffer.readUnsignedShort();
+			groundScaleZ = buffer.readUnsignedShort();
 		} else if (opcode == 113) {
-			ambient = buffer.readByte();
+			ambience = buffer.readByte();
 		} else if (opcode == 114) {
-			contrast = buffer.readByte();
+			diffusion = buffer.readByte();
 		} else if (opcode == 115) {
 			team = buffer.readUnsignedByte();
 		} else if (opcode == 139) {
-			boughtId = buffer.readUnsignedShort();
+			unnotedId = buffer.readUnsignedShort();
 		} else if (opcode == 140) {
-			boughtTemplateId = buffer.readUnsignedShort();
+			notedId = buffer.readUnsignedShort();
 		} else if (opcode == 148) {
 			placeholderId = buffer.readUnsignedShort();
 		} else if (opcode == 149) {
@@ -161,9 +164,9 @@ public class ItemConfig extends ConfigExtensionBase {
 	@Override
 	public OutputStream encode(OutputStream buffer) {
 
-		if (inventoryModel > -1) {
+		if (modelId > -1) {
 			buffer.writeByte(1);
-			buffer.writeShort(inventoryModel);
+			buffer.writeShort(modelId);
 		}
 
 		if (!name.equals("null")) {
@@ -171,168 +174,174 @@ public class ItemConfig extends ConfigExtensionBase {
 			buffer.writeString(name);
 		}
 
-		if (zoom2d != 2000) {
+		if (spriteScale != 2000) {
 			buffer.writeByte(4);
-			buffer.writeShort(zoom2d);
+			buffer.writeShort(spriteScale);
 		}
 
-		if (xan2d != 0) {
+		if (spritePitch != 0) {
 			buffer.writeByte(5);
-			buffer.writeShort(xan2d);
+			buffer.writeShort(spritePitch);
 		}
 
-		if (yan2d != 0) {
+		if (spriteCameraRoll != 0) {
 			buffer.writeByte(6);
-			buffer.writeShort(yan2d);
+			buffer.writeShort(spriteCameraRoll);
 		}
 
-		if (xOffset2d != 0) {
+		if (spriteTranslateX != 0) {
 			buffer.writeByte(7);
-			buffer.writeShort(xOffset2d);
+			buffer.writeShort(spriteTranslateX);
 		}
 
-		if (yOffset2d != 0) {
+		if (spriteTranslateY != 0) {
 			buffer.writeByte(8);
-			buffer.writeShort(yOffset2d);
+			buffer.writeShort(spriteTranslateY);
 		}
-
+		if (!opcode9.equals("null")) {
+			buffer.writeByte(9);
+			buffer.writeString(opcode9);
+		}
 		if (stackable != 0) {
 			buffer.writeByte(11);
 		}
 
-		if (cost != 1) {
+		if (value != 1) {
 			buffer.writeByte(12);
-			buffer.writeInt(cost);
+			buffer.writeInt(value);
 		}
 
-		if (members) {
+		if (membersObject) {
 			buffer.writeByte(16);
 		}
 
-		if (maleModel0 > -1) {
+		if (primaryMaleModel > -1) {
 			buffer.writeByte(23);
-			buffer.writeShort(maleModel0);
-			buffer.writeByte(maleOffset);
+			buffer.writeShort(primaryMaleModel);
+			buffer.writeByte(maleTranslation);
 		}
 		
-		if (maleModel1 > -1) {
+		if (secondaryMaleModel > -1) {
 			buffer.writeByte(24);
-			buffer.writeShort(maleModel1);
+			buffer.writeShort(secondaryMaleModel);
 		}
 		
-		if (femaleModel0 > -1) {
+		if (primaryFemaleModel > -1) {
 			buffer.writeByte(25);
-			buffer.writeShort(femaleModel0);
-			buffer.writeByte(femaleOffset);
+			buffer.writeShort(primaryFemaleModel);
+			buffer.writeByte(femaleTranslation);
 		}
 		
-		if (femaleModel1 > -1) {
+		if (secondaryFemaleModel > -1) {
 			buffer.writeByte(26);
-			buffer.writeShort(femaleModel1);
+			buffer.writeShort(secondaryFemaleModel);
 		}
 		
 		for (int index = 0; index < 5; index++) {
-			if (options[index] != null && !options[index].isEmpty() && !options[index].equals("null")) {
+			if (groundActions[index] != null && !groundActions[index].isEmpty() && !groundActions[index].equals("null")) {
 				buffer.writeByte(index + 30);
-				buffer.writeString(options[index]);
+				buffer.writeString(groundActions[index]);
 			}
 		}
 
 		for (int index = 0; index < 5; index++) {
-			if (interfaceOptions[index] != null && !interfaceOptions[index].isEmpty() && !interfaceOptions[index].equals("null")) {
+			if (itemActions[index] != null && !itemActions[index].isEmpty() && !itemActions[index].equals("null")) {
 				buffer.writeByte(index + 35);
-				buffer.writeString(interfaceOptions[index]);
+				buffer.writeString(itemActions[index]);
 			}
 		}
 
-		if (colorFind != null && colorReplace != null) {
+		if (originalModelColors != null && modifiedModelColors != null) {
 			buffer.writeByte(40);
-			int length = Math.min(colorFind.length, colorReplace.length);
+			int length = Math.min(originalModelColors.length, modifiedModelColors.length);
 			buffer.writeByte(length);
 			for (int index = 0; index < length; index++) {
-				buffer.writeShort(colorFind[index]);
-				buffer.writeShort(colorReplace[index]);
+				buffer.writeShort(originalModelColors[index]);
+				buffer.writeShort(modifiedModelColors[index]);
 			}
 		}
 
-		if (textureFind != null && textureReplace != null) {
+		if (originalTextureColors != null && modifiedTextureColors != null) {
 			buffer.writeByte(41);
-			int length = Math.min(textureFind.length, textureReplace.length);
+			int length = Math.min(originalTextureColors.length, modifiedTextureColors.length);
 			buffer.writeByte(length);
 			for (int index = 0; index < length; index++) {
-				buffer.writeShort(textureFind[index]);
-				buffer.writeShort(textureReplace[index]);
+				buffer.writeShort(originalTextureColors[index]);
+				buffer.writeShort(modifiedTextureColors[index]);
 			}
 		}
 
-		if (shiftClickDropIndex != -2) {
+		if (shiftClickIndex != -2) {
 			buffer.writeByte(42);
-			buffer.writeByte(shiftClickDropIndex);
+			buffer.writeByte(shiftClickIndex);
 		}
 
-		if (isTradeable) {
+		if (searchable) {
 			buffer.writeByte(65);
 		}
 
-		if (maleModel2 > -1) {
+		if (tertiaryMaleEquipmentModel > -1) {
 			buffer.writeByte(78);
-			buffer.writeShort(maleModel2);
+			buffer.writeShort(tertiaryMaleEquipmentModel);
 		}
 		
-		if (femaleModel2 > -1) {
+		if (tertiaryFemaleEquipmentModel > -1) {
 			buffer.writeByte(79);
-			buffer.writeShort(femaleModel2);
+			buffer.writeShort(tertiaryFemaleEquipmentModel);
 		}
 		
-		if (maleHeadModel > -1) {
+		if (primaryMaleHeadPiece > -1) {
 			buffer.writeByte(90);
-			buffer.writeShort(maleHeadModel);
+			buffer.writeShort(primaryMaleHeadPiece);
 		}
 		
-		if (femaleHeadModel > -1) {
+		if (primaryFemaleHeadPiece > -1) {
 			buffer.writeByte(91);
-			buffer.writeShort(femaleHeadModel);
+			buffer.writeShort(primaryFemaleHeadPiece);
 		}
 		
-		if (maleHeadModel2 > -1) {
+		if (secondaryMaleHeadPiece > -1) {
 			buffer.writeByte(92);
-			buffer.writeShort(maleHeadModel2);
+			buffer.writeShort(secondaryMaleHeadPiece);
 		}
 		
-		if (femaleHeadModel2 > -1) {
+		if (secondaryFemaleHeadPiece > -1) {
 			buffer.writeByte(93);
-			buffer.writeShort(femaleHeadModel2);
+			buffer.writeShort(secondaryFemaleHeadPiece);
 		}
-		
-		if (zan2d != 0) {
+		if (category > -1) {
+			buffer.writeByte(94);
+			buffer.writeShort(category);
+		}
+		if (spriteCameraYaw != 0) {
 			buffer.writeByte(95);
-			buffer.writeShort(zan2d);
+			buffer.writeShort(spriteCameraYaw);
 		}
 
-		if (notedID > -1) {
+		if (certID > -1) {
 			buffer.writeByte(97);
-			buffer.writeShort(notedID);
+			buffer.writeShort(certID);
 		}
 		
-		if (notedTemplate > -1) {
+		if (certTemplateID > -1) {
 			buffer.writeByte(98);
-			buffer.writeShort(notedTemplate);
+			buffer.writeShort(certTemplateID);
 		}
 		
-		if (countCo != null && countObj != null) {
+		if (stackAmounts != null && stackIDs != null) {
 
 			int[] objHolder = new int[10];
 			int[] coHolder = new int[10];
 
 			for (int index = 0; index < 10; index++) {
-				if (index < countCo.length && countCo[index] != 0) {
-					coHolder[index] = countCo[index];
+				if (index < stackAmounts.length && stackAmounts[index] != 0) {
+					coHolder[index] = stackAmounts[index];
 				}
 			}
 
 			for (int index = 0; index < 10; index++) {
-				if (index < countObj.length && countObj[index] != 0) {
-					objHolder[index] = countObj[index];
+				if (index < stackIDs.length && stackIDs[index] != 0) {
+					objHolder[index] = stackIDs[index];
 				}
 			}
 
@@ -344,29 +353,29 @@ public class ItemConfig extends ConfigExtensionBase {
 
 		}
 
-		if (resizeX > -1) {
+		if (groundScaleX > -1) {
 			buffer.writeByte(110);
-			buffer.writeShort(resizeX);
+			buffer.writeShort(groundScaleX);
 		}
 
-		if (resizeY > -1) {
+		if (groundScaleY > -1) {
 			buffer.writeByte(111);
-			buffer.writeShort(resizeY);
+			buffer.writeShort(groundScaleY);
 		}
 
-		if (resizeZ > -1) {
+		if (groundScaleZ > -1) {
 			buffer.writeByte(112);
-			buffer.writeShort(resizeZ);
+			buffer.writeShort(groundScaleZ);
 		}
 
-		if (ambient != 0) {
+		if (ambience != 0) {
 			buffer.writeByte(113);
-			buffer.writeByte(ambient);
+			buffer.writeByte(ambience);
 		}
 
-		if (contrast != 0) {
+		if (diffusion != 0) {
 			buffer.writeByte(114);
-			buffer.writeByte(contrast);
+			buffer.writeByte(diffusion);
 		}
 
 		if (team != 0) {
@@ -374,14 +383,14 @@ public class ItemConfig extends ConfigExtensionBase {
 			buffer.writeByte(team);
 		}
 
-		if (boughtId > -1) {
+		if (unnotedId > -1) {
 			buffer.writeByte(139);
-			buffer.writeShort(boughtId);
+			buffer.writeShort(unnotedId);
 		}
 
-		if (boughtTemplateId > -1) {
+		if (notedId > -1) {
 			buffer.writeByte(140);
-			buffer.writeShort(boughtTemplateId);
+			buffer.writeShort(notedId);
 		}
 
 		if (placeholderId > -1) {
@@ -422,73 +431,73 @@ public class ItemConfig extends ConfigExtensionBase {
 	@OrderType(priority = 1)
 	public String name = "null";
 	@OrderType(priority = 2)
-	public String[] options = new String[] { "null", "null", "Take", "null", "null" };
+	public String[] groundActions = new String[] { "null", "null", "Take", "null", "null" };
 	@OrderType(priority = 3)
-	public String[] interfaceOptions = new String[] { "null", "null", "null", "null", "Drop" };
+	public String[] itemActions = new String[] { "null", "null", "null", "null", "Drop" };
 	@OrderType(priority = 4) @MeshIdentifier
-	public int inventoryModel;
+	public int modelId;
 	@OrderType(priority = 5)
-	public int zoom2d = 2000;
+	public int spriteScale = 2000;
 	@OrderType(priority = 6)
-	public int xOffset2d = 0;
+	public int spriteTranslateX = 0;
 	@OrderType(priority = 7)
-	public int yOffset2d = 0;
+	public int spriteTranslateY = 0;
 	@OrderType(priority = 8)
-	public int resizeX = 128;
+	public int groundScaleX = 128;
 	@OrderType(priority = 9)
-	public int resizeY = 128;
+	public int groundScaleY = 128;
 	@OrderType(priority = 10)
-	public int resizeZ = 128;
+	public int groundScaleZ = 128;
 	@OrderType(priority = 11) @MeshIdentifier
-	public int maleModel0 = -1;
+	public int primaryMaleModel = -1;
 	@OrderType(priority = 12) @MeshIdentifier
-	public int maleModel1 = -1;
+	public int secondaryMaleModel = -1;
 	@OrderType(priority = 13) @MeshIdentifier
-	public int maleModel2 = -1;
+	public int tertiaryMaleEquipmentModel = -1;
 	@OrderType(priority = 14)
-	public int maleOffset;
+	public int maleTranslation;
 	@OrderType(priority = 15) @MeshIdentifier
-	public int maleHeadModel = -1;
+	public int primaryMaleHeadPiece = -1;
 	@OrderType(priority = 16) @MeshIdentifier
-	public int maleHeadModel2 = -1;
+	public int secondaryMaleHeadPiece = -1;
 	@OrderType(priority = 17) @MeshIdentifier
-	public int femaleModel0 = -1;
+	public int primaryFemaleModel = -1;
 	@OrderType(priority = 18) @MeshIdentifier
-	public int femaleModel1 = -1;
+	public int secondaryFemaleModel = -1;
 	@OrderType(priority = 19) @MeshIdentifier
-	public int femaleModel2 = -1;
+	public int tertiaryFemaleEquipmentModel = -1;
 	@OrderType(priority = 20)
-	public int femaleOffset;
+	public int femaleTranslation;
 	@OrderType(priority = 21) @MeshIdentifier
-	public int femaleHeadModel = -1;
+	public int primaryFemaleHeadPiece = -1;
 	@OrderType(priority = 22) @MeshIdentifier
-	public int femaleHeadModel2 = -1;
+	public int secondaryFemaleHeadPiece = -1;
 	@OrderType(priority = 23)
-	public int[] colorFind;
+	public int[] originalModelColors;
 	@OrderType(priority = 24)
-	public int[] colorReplace;
+	public int[] modifiedModelColors;
 	@OrderType(priority = 25)
-	public int[] textureFind;
+	public int[] originalTextureColors;
 	@OrderType(priority = 26)
-	public int[] textureReplace;
+	public int[] modifiedTextureColors;
 	@OrderType(priority = 27)
-	public int xan2d = 0;
-	public int yan2d = 0;
-	public int zan2d = 0;
-	public int cost = 1;
-	public boolean isTradeable;
+	public int spritePitch = 0;
+	public int spriteCameraRoll = 0;
+	public int spriteCameraYaw = 0;
+	public int value = 1;
+	public boolean searchable;
 	public int stackable = 0;
-	public boolean members = false;
-	public int ambient;
-	public int contrast;
-	public int[] countCo;
-	public int[] countObj;
-	public int notedID = -1;
-	public int notedTemplate = -1;
+	public boolean membersObject = false;
+	public int ambience;
+	public int diffusion;
+	public int[] stackAmounts;
+	public int[] stackIDs;
+	public int certID = -1;
+	public int certTemplateID = -1;
 	public int team;
-	public int shiftClickDropIndex = -2;
-	public int boughtId = -1;
-	public int boughtTemplateId = -1;
+	public int shiftClickIndex = -2;
+	public int unnotedId = -1;
+	public int notedId = -1;
 	public int placeholderId = -1;
 	public int placeholderTemplateId = -1;
 	public HashMap<Integer, Object> params = null;
@@ -540,12 +549,12 @@ public class ItemConfig extends ConfigExtensionBase {
 	public List<Pair<Integer, Integer>> getRecolors() {
 		List<Pair<Integer, Integer>> pairs = Lists.newArrayList();
 		try {
-			if (colorFind == null || colorReplace == null) {
+			if (originalModelColors == null || modifiedModelColors == null) {
 				return null;
 			}
-			int length = Math.min(colorFind.length, colorReplace.length);
+			int length = Math.min(originalModelColors.length, modifiedModelColors.length);
 			for (int index = 0; index < length; index++) {
-				pairs.add(new Pair<>(colorFind[index], colorReplace[index]));
+				pairs.add(new Pair<>(originalModelColors[index], modifiedModelColors[index]));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -557,12 +566,12 @@ public class ItemConfig extends ConfigExtensionBase {
 	public List<Pair<Integer, Integer>> getRetextures() {
 		List<Pair<Integer, Integer>> pairs = Lists.newArrayList();
 		try {
-			if (textureFind == null || textureReplace == null) {
+			if (originalTextureColors == null || modifiedTextureColors == null) {
 				return null;
 			}
-			int length = Math.min(textureFind.length, textureReplace.length);
+			int length = Math.min(originalTextureColors.length, modifiedTextureColors.length);
 			for (int index = 0; index < length; index++) {
-				pairs.add(new Pair<>(textureFind[index], textureReplace[index]));
+				pairs.add(new Pair<>(originalTextureColors[index], modifiedTextureColors[index]));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

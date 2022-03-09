@@ -42,7 +42,7 @@ public class XTEASManager {
 
 			@Override
 			public String filePath() {
-				return "C:\\Users\\Andrew\\Desktop\\rev190\\region_keys.json";
+				return "C:\\Users\\sgsrocks\\Downloads\\2022-03-02-rev203\\xteas.json";
 			}
 
 		}.load();

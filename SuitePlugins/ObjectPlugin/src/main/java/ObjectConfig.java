@@ -108,6 +108,8 @@ public class ObjectConfig extends ConfigExtensionBase {
 				}
 				setRetextureToFind(retextureToFind);
 				setTextureToReplace(textureToReplace);
+			} else if(opcode == 61) {
+				setCategory(buffer.readUnsignedShort());
 			} else if (opcode == 62) {
 				setRotated(true);
 			} else if (opcode == 64) {
@@ -341,7 +343,10 @@ public class ObjectConfig extends ConfigExtensionBase {
 				buffer.writeShort(textureToReplace[index]);
 			}
 		}
-
+if(category != -1){
+	buffer.writeByte(61);
+	buffer.writeShort(category);
+}
 		if (isRotated) {
 			buffer.writeByte(62);
 		}
@@ -554,6 +559,7 @@ public class ObjectConfig extends ConfigExtensionBase {
 	@OrderType(priority = 22)
 	public boolean blocksProjectile = true;
 	@OrderType(priority = 101)
+	public int category;
 	public Map<Integer, Object> params = null;
 
 	private static Map<Field, Integer> fieldPriorities;
@@ -574,4 +580,11 @@ public class ObjectConfig extends ConfigExtensionBase {
 		return fieldPriorities;
 	}
 
+	public void setCategory(int category) {
+		this.category = category;
+	}
+
+	public int getCategory() {
+		return category;
+	}
 }

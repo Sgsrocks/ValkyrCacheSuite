@@ -59,12 +59,12 @@ public class ItemLoader extends LoaderExtensionBase {
 	}
 	
 	private ItemConfig toNote(ItemConfig config) {
-		if (config.notedID != -1 && config.notedTemplate != -1) {
-			ItemConfig original = (ItemConfig) getDefinitions().get(config.notedID);
+		if (config.certID != -1 && config.certTemplateID != -1) {
+			ItemConfig original = (ItemConfig) getDefinitions().get(config.certID);
 			if (original != null) {
 				config.name = original.name;
-				config.cost = original.cost;
-				config.members = original.members;
+				config.value = original.value;
+				config.membersObject = original.membersObject;
 				config.stackable = original.stackable;
 			} else {
 				Dialogues.alert(Alert.AlertType.ERROR, "Error", "You can't import an item with a non-existing note item.", null, false);
